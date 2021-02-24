@@ -9,3 +9,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('register', 'api\Auth\RegisterController@register');
 Route::post('login', 'api\Auth\LoginController@login');
+
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('/tasks', 'api\TaskController');
+    Route::get('/task/completed/', 'api\TaskController@completedTasks');
+    Route::get('/task/ongoing', 'api\TaskController@ongoingTasks');
+    Route::get('/task/status/{id}', 'api\TaskController@changeStatusTask');
+});
