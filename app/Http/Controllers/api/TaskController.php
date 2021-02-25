@@ -109,7 +109,7 @@ class TaskController extends BaseController
             if ($task->user_id === Auth::id()) {
                 $task->title = $request->title;
                 if ($request->has('content')) $task->content = $request->content;
-                if ($request->has('created_at')) $task->content = $request->created_at;
+                if ($request->has('created_at')) $task->created_at = $request->created_at;
                 $task->save();
                 return $this->sendResponse(new ResourcesTask($task), 'Task Updated Successfully');
             } else {
