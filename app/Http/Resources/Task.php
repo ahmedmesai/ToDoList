@@ -20,6 +20,7 @@ class Task extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'is_completed' => $this->is_completed,
+            'task_date' => $this->task_date,
             'created_at' => $this->created_at->diffForhumans(),
         ];
     }

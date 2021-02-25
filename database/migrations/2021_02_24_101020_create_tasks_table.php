@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 
 class CreateTasksTable extends Migration
@@ -19,6 +20,7 @@ class CreateTasksTable extends Migration
             $table->string('title');
             $table->text('content')->nullable();
             $table->boolean('is_completed')->default(false);
+            $table->dateTime('task_date')->default(Carbon::now());
             $table->timestamps();
         });
     }
