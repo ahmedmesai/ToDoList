@@ -39,7 +39,7 @@ class ForgotPasswordController extends BaseController
             ]);
 
             Mail::send('Mails.forgot', ['token' => $token], function (Message $message)  use ($email) {
-                $message->from('ahmed@messaibelgacem.com', 'Ahmed Messai Belgacem');
+                // $message->from('ahmed@messaibelgacem.com', 'Ahmed Messai Belgacem');
                 $message->to($email);
                 $message->subject('Reset Your Password');
             });
