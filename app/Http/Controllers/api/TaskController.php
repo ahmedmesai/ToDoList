@@ -66,6 +66,15 @@ class TaskController extends BaseController
         return $this->sendResponse(ResourcesTask::collection($tasks), 'Retriverd All Tasks Completed Successfully');
     }
 
+    public function tomorrowTasks()
+    {
+        $user = Auth::user();
+        $today = Carbon::today();
+        $tasks = $user->tasks()->where('is_completed', false)
+            ->where('task_date', '>', $today)->latest()->get();
+        return $this->sendResponse(ResourcesTask::collection($tasks), 'Retriverd All Tasks Tomorrow Not Completed Yet Successfully');
+    }
+
     public function goTaskTomorrow($id)
     {
         $task = Task::find($id);
