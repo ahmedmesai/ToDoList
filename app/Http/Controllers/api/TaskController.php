@@ -5,7 +5,6 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\api\BaseController as BaseController;
 use App\Http\Resources\Task as ResourcesTask;
 use App\Models\Task;
-use Dotenv\Store\File\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -13,15 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class TaskController extends BaseController
 {
-    // Show All Tasks
-    // public function index()
-    // {
-    //     $user = Auth::user();
-    //     $tasks = $user->tasks()->latest()->get();
-
-    //     return $this->sendResponse(ResourcesTask::collection($tasks), 'Retriverd Tasks Successfully');
-    // }
-
 
     // Function Change Status is Completed or Not
     public function changeStatusTask($id)
@@ -35,7 +25,7 @@ class TaskController extends BaseController
                     $task->is_completed = false;
                 }
                 $task->save();
-                return $this->sendResponse(new ResourcesTask($task), 'Task Showed After Change Status Successfully');
+                return $this->sendResponse($task->is_completed == true ? 'Task Completed' : 'Task Not Completed Yet', 'Task Showed After Change Status Successfully');
             } else {
                 return $this->sendError('You do not have right to change status this Task');
             }
@@ -154,7 +144,7 @@ class TaskController extends BaseController
                 // $today = Carbon::today(); depend on server
                 $task->task_date = Carbon::create($today)->addDay();
                 $task->save();
-                return $this->sendResponse(new ResourcesTask($task), 'Task Transfered Tomorrow Successfully');
+                return $this->sendResponse([], 'Task Transfered Tomorrow Successfully');
             } else {
                 return $this->sendError('You do not have right accessing this Task');
             }
@@ -184,7 +174,7 @@ class TaskController extends BaseController
                 // $task->task_date = Carbon::createFromFormat('Y-m-d h:i:s', $tomorrow)->subDay();
                 $task->task_date = Carbon::create($today);
                 $task->save();
-                return $this->sendResponse(new ResourcesTask($task), 'Task Transfered Today Successfully');
+                return $this->sendResponse([], 'Task Transfered Back Today Successfully');
             } else {
                 return $this->sendError('You do not have right accessing this Task');
             }
@@ -213,7 +203,7 @@ class TaskController extends BaseController
         $input['created_at'] = $request->today;
 
         $task = Task::create($input);
-        return $this->sendResponse($task, 'Task Created Successfully');
+        return $this->sendResponse([], 'Task Created Successfully');
     }
 
 
@@ -250,7 +240,7 @@ class TaskController extends BaseController
                 $task->title = $request->title;
                 if ($request->has('content')) $task->content = $request->content;
                 $task->save();
-                return $this->sendResponse(new ResourcesTask($task), 'Task Updated Successfully');
+                return $this->sendResponse([], 'Task Updated Successfully');
             } else {
                 return $this->sendError('You do not have right updating this Task');
             }
@@ -267,7 +257,7 @@ class TaskController extends BaseController
         if (!is_null($task)) {
             if ($task->user_id === Auth::id()) {
                 $task->delete();
-                return $this->sendResponse(new ResourcesTask($task), 'Task Deleted Successfully');
+                return $this->sendResponse([], 'Task Deleted Successfully');
             } else {
                 return $this->sendError('You do not have right deleting this Task');
             }

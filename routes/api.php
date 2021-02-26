@@ -18,7 +18,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/task/ongoing', 'api\TaskController@ongoingTasks');
     Route::get('/task/completed/', 'api\TaskController@completedTasks');
     Route::get('/task/tomorrow', 'api\TaskController@tomorrowTasks');
-    Route::get('/task/status/{id}', 'api\TaskController@changeStatusTask');
-    Route::get('/task/goTaskTomorrow/{id}', 'api\TaskController@goTaskTomorrow');
-    Route::get('/task/backTaskToday/{id}', 'api\TaskController@backTaskToday');
+    Route::post('/task/status/{id}', 'api\TaskController@changeStatusTask');
+    Route::post('/task/goTaskTomorrow/{id}', 'api\TaskController@goTaskTomorrow');
+    Route::post('/task/backTaskToday/{id}', 'api\TaskController@backTaskToday');
 });
