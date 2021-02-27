@@ -20,7 +20,7 @@ class CreateTasksTable extends Migration
             $table->string('title');
             $table->text('content')->nullable();
             $table->boolean('is_completed')->default(false);
-            $table->dateTime('task_date')->default(Carbon::now());
+            $table->date('task_date')->default(Carbon::now());
             $table->timestamps();
         });
     }

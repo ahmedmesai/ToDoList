@@ -39,7 +39,7 @@ class TaskController extends BaseController
     public function ongoingTasks(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'today' => 'required|date_format:Y-m-d\TH:i:sP'
+            'today' => 'required|date_format:d-m-Y'
         ]);
 
         if ($validator->fails()) {
@@ -49,16 +49,11 @@ class TaskController extends BaseController
         $today = $request->today;
 
         $user = Auth::user();
-        // $tomorrow = Carbon::today()->addDay();
-        // $tomorrow = Carbon::create($today)->addDay();
-        // $yesterday = Carbon::create($today)->subDay();
-        // $tasks = $user->tasks()->where('is_completed', false)->latest()->get();
         $startOfDay = Carbon::create($today)->startOfDay();
         $endOfDay = Carbon::create($today)->endOfDay();
 
         // Transfer Not Completed Task To Next Day
         $notCompleteTasks = $user->tasks()->where('is_completed', false)->where('task_date', '<', $startOfDay)->get();
-        // dd($notCompleteTasks);
         if (count($notCompleteTasks) > 0) {
             foreach ($notCompleteTasks as $task) {
                 $task->task_date = Carbon::create($today);
@@ -78,7 +73,7 @@ class TaskController extends BaseController
     public function completedTasks(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'today' => 'required|date_format:Y-m-d\TH:i:sP'
+            'today' => 'required|date_format:d-m-Y'
         ]);
 
         if ($validator->fails()) {
@@ -88,10 +83,6 @@ class TaskController extends BaseController
         $today = $request->today;
 
         $user = Auth::user();
-        // $tomorrow = Carbon::today()->addDay();
-        // $tomorrow = Carbon::create($today)->addDay();
-        // $yesterday = Carbon::today()->subDay();
-        // $yesterday = Carbon::create($today)->subDay();
         $startOfDay = Carbon::create($today)->startOfDay();
         $endOfDay = Carbon::create($today)->endOfDay();
         $tasks = $user->tasks()->where('is_completed', true)
@@ -106,7 +97,7 @@ class TaskController extends BaseController
     public function tomorrowTasks(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'today' => 'required|date_format:Y-m-d\TH:i:sP'
+            'today' => 'required|date_format:d-m-Y'
         ]);
 
         if ($validator->fails()) {
@@ -116,8 +107,6 @@ class TaskController extends BaseController
         $today = $request->today;
 
         $user = Auth::user();
-        // $today = Carbon::today();
-        // $today = Carbon::create($today);
         $endOfDay = Carbon::create($today)->endOfDay();
         $tasks = $user->tasks()->where('is_completed', false)
             ->where('task_date', '>', $endOfDay)->latest()->get();
@@ -129,7 +118,7 @@ class TaskController extends BaseController
     public function goTaskTomorrow(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'today' => 'required|date_format:Y-m-d\TH:i:sP'
+            'today' => 'required|date_format:d-m-Y'
         ]);
 
         if ($validator->fails()) {
@@ -141,7 +130,6 @@ class TaskController extends BaseController
         $task = Task::find($id);
         if (!is_null($task)) {
             if ($task->user_id === Auth::id()) {
-                // $today = Carbon::today(); depend on server
                 $task->task_date = Carbon::create($today)->addDay();
                 $task->save();
                 return $this->sendResponse([], 'Task Transfered Tomorrow Successfully');
@@ -158,7 +146,7 @@ class TaskController extends BaseController
     public function backTaskToday(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'today' => 'required|date_format:Y-m-d\TH:i:sP'
+            'today' => 'required|date_format:d-m-Y'
         ]);
 
         if ($validator->fails()) {
@@ -170,8 +158,6 @@ class TaskController extends BaseController
         $task = Task::find($id);
         if (!is_null($task)) {
             if ($task->user_id === Auth::id()) {
-                // $tomorrow = Carbon::today()->addDay(); /* Depend on time server */
-                // $task->task_date = Carbon::createFromFormat('Y-m-d h:i:s', $tomorrow)->subDay();
                 $task->task_date = Carbon::create($today);
                 $task->save();
                 return $this->sendResponse([], 'Task Transfered Back Today Successfully');
@@ -189,21 +175,23 @@ class TaskController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'today' => 'required|date_format:Y-m-d\TH:i:sP' // W3S Format Time
+            'today' => 'required|date_format:d-m-Y'
         ]);
 
         if ($validator->fails()) {
             return $this->sendError('Validate Error', $validator->errors());
         }
 
+        $today = Carbon::create($request->today);
+
         $input['user_id'] = Auth::id();
         $input['title'] = $request->title;
         if ($request->has('content')) $input['content'] = $request->content;
-        $input['task_date'] = $request->today;
-        $input['created_at'] = $request->today;
+        $input['task_date'] = $today;
+        $input['is_completed'] = false;
 
         $task = Task::create($input);
-        return $this->sendResponse([], 'Task Created Successfully');
+        return $this->sendResponse(new ResourcesTask($task), 'Task Created Successfully');
     }
 
 
