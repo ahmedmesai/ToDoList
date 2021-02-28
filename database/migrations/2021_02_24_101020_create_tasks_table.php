@@ -18,7 +18,6 @@ class CreateTasksTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('title');
-            $table->text('content')->nullable();
             $table->boolean('is_completed')->default(false);
             $table->date('task_date')->default(Carbon::now());
             $table->timestamps();

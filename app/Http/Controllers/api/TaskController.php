@@ -186,7 +186,6 @@ class TaskController extends BaseController
 
         $input['user_id'] = Auth::id();
         $input['title'] = $request->title;
-        if ($request->has('content')) $input['content'] = $request->content;
         $input['task_date'] = $today;
         $input['is_completed'] = false;
 
@@ -226,7 +225,6 @@ class TaskController extends BaseController
 
             if ($task->user_id === Auth::id()) {
                 $task->title = $request->title;
-                if ($request->has('content')) $task->content = $request->content;
                 $task->save();
                 return $this->sendResponse([], 'Task Updated Successfully');
             } else {
