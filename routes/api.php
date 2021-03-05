@@ -15,9 +15,9 @@ Route::post('password/reset', 'api\ForgotPasswordController@reset');
 
 Route::middleware('auth:api')->group(function () {
     Route::apiResource('/tasks', 'api\TaskController');
-    Route::get('/task/ongoing', 'api\TaskController@ongoingTasks');
-    Route::get('/task/completed/', 'api\TaskController@completedTasks');
-    Route::get('/task/tomorrow', 'api\TaskController@tomorrowTasks');
+    Route::post('/task/ongoing', 'api\TaskController@ongoingTasks');
+    Route::post('/task/completed/', 'api\TaskController@completedTasks');
+    Route::post('/task/tomorrow', 'api\TaskController@tomorrowTasks');
     Route::post('/task/status/{id}', 'api\TaskController@changeStatusTask');
     Route::post('/task/goTaskTomorrow/{id}', 'api\TaskController@goTaskTomorrow');
     Route::post('/task/backTaskToday/{id}', 'api\TaskController@backTaskToday');
